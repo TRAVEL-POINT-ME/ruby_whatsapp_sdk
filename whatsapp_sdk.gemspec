@@ -44,8 +44,9 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency("minitest", "~> 5.0")
   spec.add_development_dependency("rake", "~> 12.3")
 
-  spec.add_dependency("faraday", "~> 2")
-  spec.add_dependency("faraday-multipart", "~> 1")
+  # spec.add_dependency("faraday", "~> 2")
+  # spec.add_dependency("faraday-multipart", "~> 1")
+  spec.add_dependency("net-http", "~> 0.4")
   spec.add_dependency("zeitwerk", "~> 2")
   spec.metadata['rubygems_mfa_required'] = 'true'
 end

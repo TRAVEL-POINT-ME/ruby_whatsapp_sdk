@@ -2,8 +2,8 @@
 # frozen_string_literal: true
 
 require "zeitwerk"
-require "faraday"
-require "faraday/multipart"
+# require "faraday"
+# require "faraday/multipart"
 
 loader = Zeitwerk::Loader.for_gem
 loader.setup

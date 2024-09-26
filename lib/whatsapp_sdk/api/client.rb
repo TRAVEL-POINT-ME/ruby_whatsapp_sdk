@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require "faraday"
-require "faraday/multipart"
-
 module WhatsappSdk
   module Api
     class Client
@@ -30,11 +27,27 @@ module WhatsappSdk
       def send_request(endpoint: "", full_url: nil, http_method: "post", params: {}, headers: {}, multipart: false)
         url = full_url || "#{ApiConfiguration::API_URL}/#{@api_version}/"
 
-        faraday_request = faraday(url: url, multipart: multipart)
+        url_en = URI(endpoint)
+        https = Net::HTTP.new(url_en.host, url_en.port)
+        https.use_ssl = true
 
-        response = faraday_request.public_send(http_method, endpoint, request_params(params, headers), headers)
+        request = case http_method
+                  when 'post'
+                    Net::HTTP::Post.new(url_en)
+                  when 'get'
+                    Net::HTTP::Get.new(url_en)
+                  end
 
-        return nil if response.body == ""
+        request["Content-Type"] = "application/json" if http_method == 'post'
+        request.body = { messaging_product: "whatsapp", to: "380669214099", type: "template",
+                         template: { name: "hello_world", language: { code: "en_US" } } }.to_json
+
+        request['Authorization'] = "Bearer #{@access_token}" unless @access_token.nil?
+        response = https.request(request)&.body
+
+        # response = faraday_request.public_send(http_method, endpoint, request_params(params, headers), headers)
+
+        return nil if response.body == "" || response.body["error"]
 
         JSON.parse(response.body)
       end
@@ -63,15 +76,9 @@ module WhatsappSdk
         params
       end
 
-      def faraday(url:, multipart: false)
-        ::Faraday.new(url) do |client|
-          client.request(:multipart) if multipart
-          client.request(:url_encoded)
-          client.adapter(::Faraday.default_adapter)
-          client.headers['Authorization'] = "Bearer #{@access_token}" unless @access_token.nil?
-          client.response(:logger, @logger, @logger_options) unless @logger.nil?
-        end
-      end
+      # def faraday(url:, http_method: "post")
+
+      # end
 
       def validate_api_version(api_version)
         raise ArgumentError, "Invalid API version: #{api_version}" unless API_VERSIONS.include?(api_version)

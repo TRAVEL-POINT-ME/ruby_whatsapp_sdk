@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require "faraday"
-require "faraday/multipart"
+# require "faraday"
+# require "faraday/multipart"
 
 require_relative "request"
 require_relative "response"
@@ -86,28 +86,29 @@ module WhatsappSdk
       # see the official documentation https://developers.facebook.com/docs/whatsapp/cloud-api/reference/media#supported-media-types.
       #
       # @return [Api::Response] Response object.
-      def upload(sender_id:, file_path:, type:, headers: {})
-        raise FileNotFoundError.new(file_path: file_path) unless File.file?(file_path)
 
-        params = {
-          messaging_product: "whatsapp",
-          file: Faraday::FilePart.new(file_path, type),
-          type: type
-        }
+      # commented in no need of uploading, desided not to change faraday
+      # def upload(sender_id:, file_path:, type:, headers: {})
+      #   raise FileNotFoundError.new(file_path: file_path) unless File.file?(file_path)
 
-        response = send_request(
-          http_method: "post",
-          endpoint: "#{sender_id}/media",
-          params: params,
-          headers: headers,
-          multipart: true
-        )
+      #   params = {
+      #     messaging_product: "whatsapp",
+      #     type: type
+      #   }
 
-        Api::Response.new(
-          response: response,
-          data_class_type: Api::Responses::MediaDataResponse
-        )
-      end
+      #   response = send_request(
+      #     http_method: "post",
+      #     endpoint: "#{sender_id}/media",
+      #     params: params,
+      #     headers: headers,
+      #     multipart: true
+      #   )
+
+      #   Api::Response.new(
+      #     response: response,
+      #     data_class_type: Api::Responses::MediaDataResponse
+      #   )
+      # end
 
       # Delete a Media by ID.
       #
