@@ -39,15 +39,12 @@ module WhatsappSdk
                   end
 
         request["Content-Type"] = "application/json" if http_method == 'post'
-        request.body = { messaging_product: "whatsapp", to: "380669214099", type: "template",
-                         template: { name: "hello_world", language: { code: "en_US" } } }.to_json
+        request.body = request_params(params, headers)
 
         request['Authorization'] = "Bearer #{@access_token}" unless @access_token.nil?
-        response = https.request(request)&.body
+        response = https.request(request)
 
-        # response = faraday_request.public_send(http_method, endpoint, request_params(params, headers), headers)
-
-        return nil if response.body == "" || response.body["error"]
+        return nil if response&.body == "" || response&.body["error"]
 
         JSON.parse(response.body)
       end
