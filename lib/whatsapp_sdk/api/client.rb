@@ -27,7 +27,7 @@ module WhatsappSdk
       def send_request(endpoint: "", full_url: nil, http_method: "post", params: {}, headers: {}, multipart: false)
         url = full_url || "#{ApiConfiguration::API_URL}/#{@api_version}/"
 
-        url_en = URI(endpoint)
+        url_en = URI(url + endpoint)
         https = Net::HTTP.new(url_en.host, url_en.port)
         https.use_ssl = true
 
