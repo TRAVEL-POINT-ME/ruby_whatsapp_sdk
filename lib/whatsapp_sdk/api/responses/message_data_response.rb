@@ -19,6 +19,7 @@ module WhatsappSdk
         end
 
         def self.build_from_response(response:)
+          return unless response
           return unless response["messages"]
 
           new(response: response)
